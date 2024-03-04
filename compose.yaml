@@ -1,26 +1,36 @@
-version: '0.0.1'
+version: '0.0.8'
 
 services:
-  app:
-    image: 'mig-api:latest'
-    build:
-      dockerfile: ./docker/default/Dockerfile
-      context: .
-    container_name: app
-    ports:
-      - 8080:8080
-    depends_on:
-      - db
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-      - SPRING_DATASOURCE_USERNAME=postgres
-      - SPRING_DATASOURCE_PASSWORD=postgres
+#  app:
+#    container_name: app
+#    image: 'mig-api:latest'
+#    build:
+#      dockerfile: ./docker/default/Dockerfile
+#      context: .
+#    expose:
+#      - 8080
+#    depends_on:
+#      - db
+#      - nginx
+#    environment:
+#      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mig
+#      - SPRING_DATASOURCE_USERNAME=postgres
+#      - SPRING_DATASOURCE_PASSWORD=postgres
+#
+#  db:
+#    image: 'postgres:15-alpine'
+#    container_name: db
+#    environment:
+#      - POSTGRES_USER=postgres
+#      - POSTGRES_PASSWORD=postgres
+#      - POSTGRES_DB=mig
+#    ports:
+#      - 5432:5432
 
-  db:
-    image: 'postgres:15-alpine'
-    container_name: db
-    environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+  nginx:
+    container_name: nginx
+    image: nginx:latest
     ports:
-      - 5432:5432
+      - 80:80
+    volumes:
+      - ./nginx/conf.d/nginx.conf:/etc/nginx/conf.d/nginx.conf
