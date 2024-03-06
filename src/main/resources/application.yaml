@@ -27,7 +27,7 @@ spring:
       - classpath:/db/migration
 #      - classpath:/db/callback
 
-home:
+mig:
   jwt:
     secret: nevergonnagiveyouupnevergonnaletyoudownnevergonnarunaroundanddesertyou
     expiration-ms: 1440000
