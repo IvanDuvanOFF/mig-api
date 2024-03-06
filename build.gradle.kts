@@ -8,6 +8,16 @@ plugins {
 	kotlin("plugin.jpa") version "1.9.22"
 
 	id("org.flywaydb.flyway") version "9.22.1"
+
+	id("org.sonarqube") version "4.4.1.3373"
+}
+
+sonar {
+	properties {
+		property("sonar.projectKey", "IvanDuvanOFF_mig-api")
+		property("sonar.organization", "ivanduvanoff")
+		property("sonar.host.url", "https://sonarcloud.io")
+	}
 }
 
 group = "org.example"
