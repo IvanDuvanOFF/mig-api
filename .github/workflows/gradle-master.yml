@@ -36,13 +36,6 @@ jobs:
         id: test
         run: ./gradlew test
 
-      - name: Sonar scan
-        uses: jinguji/sonarcloud-gradle-github-action@v2
-        with:
-          sonar-token: ${{ secrets.SONAR_TOKEN }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Successful tests
         if: steps.test.outcome != 'success'
         run: |
