@@ -12,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.web.bind.annotation.*
 
-@RestController("/api/auth")
+@RestController
+@RequestMapping("/api/auth")
 class AuthenticationController(
     @Autowired
     private val userService: UserService,
@@ -22,7 +23,7 @@ class AuthenticationController(
     private val migUtils: MigUtils
 ) {
 
-    @PostMapping("/signup")
+    @PostMapping("signup")
     fun signUp(@RequestBody signUpRequest: UserDto, request: HttpServletRequest): Redirect {
         userService.saveUser(signUpRequest, request)
 
@@ -31,7 +32,7 @@ class AuthenticationController(
         return Redirect("$url/api/auth/signin")
     }
 
-    @GetMapping("/signup/confirm")
+    @GetMapping("signup/confirm")
     fun confirmation(@RequestParam token: String, request: HttpServletRequest): Redirect {
         userService.activateUser(token)
 
@@ -40,10 +41,10 @@ class AuthenticationController(
         return Redirect(url = url)
     }
 
-    @PostMapping("/signin")
+    @PostMapping("signin")
     fun signIn(@RequestBody signInRequest: SignInRequest): SignInResponse = userService.signIn(signInRequest)
 
-    @PostMapping("/refresh")
+    @PostMapping("refresh")
     fun refresh(@RequestBody refreshTokenRequest: RefreshTokenRequest): SignInResponse =
         userService.refreshToken(refreshTokenRequest)
 }

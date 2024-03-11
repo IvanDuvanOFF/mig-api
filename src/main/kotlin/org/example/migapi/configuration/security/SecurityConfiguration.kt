@@ -32,6 +32,7 @@ class SecurityConfiguration(
             .authorizeHttpRequests {
                 it
                     .requestMatchers("/api/auth/**").permitAll()
+                    .requestMatchers("/index/**").permitAll()
                     .anyRequest().authenticated()
             }
             .authenticationProvider(authenticationProvider())

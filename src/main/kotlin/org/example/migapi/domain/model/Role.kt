@@ -6,6 +6,5 @@ import jakarta.persistence.*
 @Table(name = "roles")
 data class Role(
     @Id
-    @Enumerated(value = EnumType.STRING)
-    val name: ERole
+    val name: String
 )

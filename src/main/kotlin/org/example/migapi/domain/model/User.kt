@@ -17,6 +17,7 @@ data class User(
     var password: String,
 
     @ManyToOne(targetEntity = Role::class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "role")
     var role: Role,
 
     @Column(nullable = false, name = "is_active")
@@ -26,7 +27,7 @@ data class User(
         .username(username)
         .password(password)
         .authorities(
-            listOf(SimpleGrantedAuthority(role.name.name))
+            listOf(SimpleGrantedAuthority(role.name))
         )
         .disabled(!isActive)
         .build()
