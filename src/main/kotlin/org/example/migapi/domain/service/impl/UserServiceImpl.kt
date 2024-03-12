@@ -7,7 +7,6 @@ import org.example.migapi.domain.dto.auth.SignInRequest
 import org.example.migapi.domain.dto.auth.SignInResponse
 import org.example.migapi.domain.model.SpringUser
 import org.example.migapi.domain.model.User
-import org.example.migapi.domain.model.VerificationToken
 import org.example.migapi.domain.service.JwtService
 import org.example.migapi.domain.service.UserService
 import org.example.migapi.repository.RoleRepository
@@ -20,8 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import java.time.LocalDate
 import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 @Service
@@ -53,7 +52,11 @@ class UserServiceImpl(
             username = userDto.username,
             password = passwordEncoder.encode(userDto.password),
             role = role,
-            isActive = true
+            isActive = true,
+
+            name = "",
+            surname = "",
+            birthday = LocalDate.now()
         )
 
         return userRepository.save(user)

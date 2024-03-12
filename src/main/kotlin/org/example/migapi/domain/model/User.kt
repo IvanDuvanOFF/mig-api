@@ -3,7 +3,10 @@ package org.example.migapi.domain.model
 import jakarta.persistence.*
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import java.time.LocalDate
 import java.util.UUID
+import javax.validation.constraints.Email
+import javax.validation.constraints.NotEmpty
 
 @Entity
 @Table(name = "users")
@@ -22,7 +25,32 @@ data class User(
     var role: Role,
 
     @Column(nullable = false, name = "is_active")
-    var isActive: Boolean = false
+    var isActive: Boolean = false,
+
+    var name: String,
+
+    var surname: String,
+
+    var patronymic: String? = null,
+
+    @Email(message = "Email is not valid", regexp = "^[a-zA-Z0-9_!#$%&'*+/=?`{|}~^.-]+@[a-zA-Z0-9.-]+$")
+    @NotEmpty
+    var email: String = "None",
+
+    @NotEmpty
+    var phone: String = "None",
+
+    @NotEmpty
+    @ManyToOne(targetEntity = Country::class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "country")
+    var country: Country = Country(),
+
+    @NotEmpty
+    var birthday: LocalDate,
+
+    @ManyToOne(targetEntity = StudentStatus::class, fetch = FetchType.EAGER)
+    @JoinColumn(name = "status")
+    var status: StudentStatus = StudentStatus()
 ) {
     fun toSpringUser(): UserDetails = SpringUser.builder()
         .username(username)
@@ -35,10 +63,3 @@ data class User(
 }
 
 typealias SpringUser = org.springframework.security.core.userdetails.User
-
-fun SpringUser.toUser() = User(
-    username = username,
-    password = password,
-    role = Role(authorities.toList()[0].authority),
-    isActive = isEnabled
-)
