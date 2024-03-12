@@ -2,6 +2,7 @@ package org.example.migapi.domain.model
 
 import jakarta.persistence.*
 import org.springframework.security.core.authority.SimpleGrantedAuthority
+import org.springframework.security.core.userdetails.UserDetails
 import java.util.UUID
 
 @Entity
@@ -23,7 +24,7 @@ data class User(
     @Column(nullable = false, name = "is_active")
     var isActive: Boolean = false
 ) {
-    fun toSpringUser() = SpringUser.builder()
+    fun toSpringUser(): UserDetails = SpringUser.builder()
         .username(username)
         .password(password)
         .authorities(
@@ -34,3 +35,10 @@ data class User(
 }
 
 typealias SpringUser = org.springframework.security.core.userdetails.User
+
+fun SpringUser.toUser() = User(
+    username = username,
+    password = password,
+    role = Role(authorities.toList()[0].authority),
+    isActive = isEnabled
+)

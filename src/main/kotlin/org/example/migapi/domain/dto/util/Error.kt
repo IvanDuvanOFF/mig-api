@@ -1,6 +1,6 @@
 package org.example.migapi.domain.dto.util
 
-data class HomeError(
+data class Error(
     val status: StatusCode,
     val message: String?
 ) {

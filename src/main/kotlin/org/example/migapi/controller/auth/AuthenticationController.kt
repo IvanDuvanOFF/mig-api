@@ -32,15 +32,6 @@ class AuthenticationController(
         return Redirect("$url/api/auth/signin")
     }
 
-    @GetMapping("signup/confirm")
-    fun confirmation(@RequestParam token: String, request: HttpServletRequest): Redirect {
-        userService.activateUser(token)
-
-        val url = migUtils.getHostUrl(request)
-
-        return Redirect(url = url)
-    }
-
     @PostMapping("signin")
     fun signIn(@RequestBody signInRequest: SignInRequest): SignInResponse = userService.signIn(signInRequest)
 

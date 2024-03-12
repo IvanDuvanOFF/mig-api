@@ -5,6 +5,7 @@ import org.example.migapi.domain.dto.UserDto
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
 import org.example.migapi.domain.dto.auth.SignInRequest
 import org.example.migapi.domain.dto.auth.SignInResponse
+import org.example.migapi.domain.model.SpringUser
 import org.example.migapi.domain.model.User
 import org.example.migapi.domain.model.VerificationToken
 import org.example.migapi.domain.service.JwtService
@@ -59,14 +60,15 @@ class UserServiceImpl(
     }
 
     override fun signIn(signInRequest: SignInRequest): SignInResponse {
-        val user = authenticationManager.authenticate(
+        val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
                 signInRequest.username,
                 signInRequest.password
             )
-        ).principal as User
+        )
 
-        val userDetails = user.toSpringUser()
+        val userDetails = authentication.principal as SpringUser
+
         val jwt = jwtService.generateToken(userDetails)
         val refreshToken = jwtService.generateRefreshToken(HashMap(), userDetails)
 
