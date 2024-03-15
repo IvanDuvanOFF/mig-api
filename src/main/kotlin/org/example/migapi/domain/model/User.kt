@@ -1,6 +1,9 @@
 package org.example.migapi.domain.model
 
 import jakarta.persistence.*
+import org.example.migapi.domain.dto.AdminDto
+import org.example.migapi.domain.dto.Dto
+import org.example.migapi.domain.dto.UserDto
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
@@ -27,9 +30,9 @@ data class User(
     @Column(nullable = false, name = "is_active")
     var isActive: Boolean = false,
 
-    var name: String,
+    var name: String = "None",
 
-    var surname: String,
+    var surname: String = "None",
 
     var patronymic: String? = null,
 
@@ -46,20 +49,46 @@ data class User(
     var country: Country = Country(),
 
     @NotEmpty
-    var birthday: LocalDate,
+    var birthday: LocalDate = LocalDate.EPOCH,
 
+    @NotEmpty
     @ManyToOne(targetEntity = StudentStatus::class, fetch = FetchType.EAGER)
     @JoinColumn(name = "status")
     var status: StudentStatus = StudentStatus()
-) {
+) : Model {
     fun toSpringUser(): UserDetails = SpringUser.builder()
         .username(username)
         .password(password)
         .authorities(
-            listOf(SimpleGrantedAuthority(role.name))
+            listOf(SimpleGrantedAuthority(role.name.name))
         )
         .disabled(!isActive)
         .build()
+
+    fun toUserDto() = UserDto(
+        id = id.toString(),
+        username = username,
+        password = password,
+        isActive = isActive,
+        role = role.name.name
+    )
+
+    fun toAdminDto() = AdminDto(
+        id = id.toString(),
+        username = username,
+        password = password,
+        isActive = isActive,
+        name = name,
+        surname = surname
+    )
+
+    fun <T : Dto>td(): T = when {
+        T is UserDto
+    }
+
+    override fun toDto(): UserDto = UserDto(
+
+    )
 }
 
 typealias SpringUser = org.springframework.security.core.userdetails.User
