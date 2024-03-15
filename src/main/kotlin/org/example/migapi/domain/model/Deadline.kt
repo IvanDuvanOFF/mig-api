@@ -10,7 +10,7 @@ data class Deadline(
     val deadlineId: DeadlineId,
 
     val days: Int
-) {
+) : Model {
     @Embeddable
     class DeadlineId(
         @ManyToOne(targetEntity = TypographyType::class, fetch = FetchType.EAGER)

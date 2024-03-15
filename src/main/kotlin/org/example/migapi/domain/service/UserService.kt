@@ -14,8 +14,4 @@ interface UserService {
     fun signIn(signInRequest: SignInRequest): SignInResponse
 
     fun refreshToken(refreshTokenRequest: RefreshTokenRequest): SignInResponse
-
-    fun prepareEmail(user: User, url: String): SimpleMailMessage
-
-    fun activateUser(token: String): User
 }

@@ -9,4 +9,4 @@ import jakarta.persistence.Table
 data class DocumentType(
     @Id
     val name: String
-)
+) : Model

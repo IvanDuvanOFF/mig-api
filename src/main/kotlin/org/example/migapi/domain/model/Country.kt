@@ -9,4 +9,4 @@ import jakarta.persistence.Table
 data class Country(
     @Id
     val name: String = "None"
-)
+) : Model

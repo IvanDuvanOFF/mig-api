@@ -17,4 +17,4 @@ data class Document(
     val expirationDate: LocalDate,
 
     var link: String? = null,
-)
+) : Model

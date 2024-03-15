@@ -32,4 +32,4 @@ data class Typography(
         joinColumns = [JoinColumn(name = "typography_id", referencedColumnName = "id")],
         inverseJoinColumns = [JoinColumn(name = "document_id", referencedColumnName = "id")])
     val documents: MutableSet<Document>
-)
+) : Model

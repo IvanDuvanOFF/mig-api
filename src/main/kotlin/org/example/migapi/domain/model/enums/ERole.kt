@@ -1,4 +1,4 @@
-package org.example.migapi.domain.model
+package org.example.migapi.domain.model.enums
 
 enum class ERole {
     ROLE_USER,

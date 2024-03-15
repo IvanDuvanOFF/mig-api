@@ -9,4 +9,4 @@ import jakarta.persistence.Table
 data class TypographyStatus(
     @Id
     val name: String
-)
+) : Model

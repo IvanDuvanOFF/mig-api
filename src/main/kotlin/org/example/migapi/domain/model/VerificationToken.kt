@@ -16,4 +16,4 @@ data class VerificationToken(
     @ManyToOne(targetEntity = User::class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
     val user: User
-)
+) : Model

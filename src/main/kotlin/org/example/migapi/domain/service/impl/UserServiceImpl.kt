@@ -14,7 +14,6 @@ import org.example.migapi.repository.UserRepository
 import org.example.migapi.repository.VerificationTokenRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.mail.SimpleMailMessage
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -96,14 +95,6 @@ class UserServiceImpl(
             token = jwt,
             refreshToken = refreshToken
         )
-    }
-
-    override fun prepareEmail(user: User, url: String): SimpleMailMessage {
-        TODO("Not need yet")
-    }
-
-    override fun activateUser(token: String): User {
-        TODO("Not yet implemented")
     }
 
     private fun findUserByVerificationToken(token: String): User {

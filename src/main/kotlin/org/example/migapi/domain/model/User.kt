@@ -55,7 +55,7 @@ data class User(
     @ManyToOne(targetEntity = StudentStatus::class, fetch = FetchType.EAGER)
     @JoinColumn(name = "status")
     var status: StudentStatus = StudentStatus()
-) : Model {
+) {
     fun toSpringUser(): UserDetails = SpringUser.builder()
         .username(username)
         .password(password)
@@ -80,14 +80,6 @@ data class User(
         isActive = isActive,
         name = name,
         surname = surname
-    )
-
-    fun <T : Dto>td(): T = when {
-        T is UserDto
-    }
-
-    override fun toDto(): UserDto = UserDto(
-
     )
 }
 
