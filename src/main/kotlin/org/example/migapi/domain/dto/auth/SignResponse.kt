@@ -1,6 +1,6 @@
 package org.example.migapi.domain.dto.auth
 
-data class SignInResponse(
+data class SignResponse(
     val token: String,
     val refreshToken: String
 )

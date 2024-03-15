@@ -1,6 +1,6 @@
 package org.example.migapi.configuration.security
 
-import org.example.migapi.domain.service.impl.MigUserDetailsService
+import org.example.migapi.domain.service.security.MigUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

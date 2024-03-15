@@ -3,8 +3,8 @@ package org.example.migapi.configuration.security
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import org.example.migapi.domain.service.JwtService
-import org.example.migapi.domain.service.impl.MigUserDetailsService
+import org.example.migapi.domain.service.security.JwtService
+import org.example.migapi.domain.service.security.MigUserDetailsService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder

@@ -1,4 +1,4 @@
-package org.example.migapi.domain.service.impl
+package org.example.migapi.domain.service.data
 
 import org.example.migapi.domain.dto.AdminDto
 import org.example.migapi.domain.dto.StudentDto
@@ -9,7 +9,7 @@ import org.example.migapi.domain.model.StudentStatus
 import org.example.migapi.domain.model.User
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.model.enums.EStudentStatus
-import org.example.migapi.domain.service.DtoService
+import org.example.migapi.domain.service.data.DtoService
 import java.time.LocalDate
 import java.util.*
 

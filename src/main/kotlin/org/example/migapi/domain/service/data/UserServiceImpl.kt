@@ -1,14 +1,13 @@
-package org.example.migapi.domain.service.impl
+package org.example.migapi.domain.service.data
 
 import jakarta.servlet.http.HttpServletRequest
-import org.example.migapi.domain.dto.UserDto
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
-import org.example.migapi.domain.dto.auth.SignInRequest
-import org.example.migapi.domain.dto.auth.SignInResponse
+import org.example.migapi.domain.dto.auth.SignRequest
+import org.example.migapi.domain.dto.auth.SignResponse
 import org.example.migapi.domain.model.SpringUser
 import org.example.migapi.domain.model.User
-import org.example.migapi.domain.service.JwtService
-import org.example.migapi.domain.service.UserService
+import org.example.migapi.domain.model.enums.ERole
+import org.example.migapi.domain.service.security.JwtService
 import org.example.migapi.repository.RoleRepository
 import org.example.migapi.repository.UserRepository
 import org.example.migapi.repository.VerificationTokenRepository
@@ -39,17 +38,17 @@ class UserServiceImpl(
     @Value("\${mig.jwt.verification-expiration}")
     private val verificationTokenExpiration: Int
 ) : UserService {
-    override fun saveUser(userDto: UserDto, request: HttpServletRequest): User {
-        if (userExists(userDto))
+    override fun saveUser(signRequest: SignRequest, request: HttpServletRequest): User {
+        if (userExists(signRequest.username))
             throw NullPointerException("Username or email is already taken")
 
 
-        val role = roleRepository.findById("ROLE_USER")
-            .orElseThrow { NullPointerException("No role ROLE_USER exists") }
+        val role = roleRepository.findById(ERole.ROLE_USER.name)
+            .orElseThrow { NullPointerException("No role ${ERole.ROLE_USER.name} does not exist") }
 
         val user = User(
-            username = userDto.username,
-            password = passwordEncoder.encode(userDto.password),
+            username = signRequest.username,
+            password = passwordEncoder.encode(signRequest.password),
             role = role,
             isActive = true,
 
@@ -61,11 +60,11 @@ class UserServiceImpl(
         return userRepository.save(user)
     }
 
-    override fun signIn(signInRequest: SignInRequest): SignInResponse {
+    override fun signIn(signRequest: SignRequest): SignResponse {
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                signInRequest.username,
-                signInRequest.password
+                signRequest.username,
+                signRequest.password
             )
         )
 
@@ -74,13 +73,13 @@ class UserServiceImpl(
         val jwt = jwtService.generateToken(userDetails)
         val refreshToken = jwtService.generateRefreshToken(HashMap(), userDetails)
 
-        return SignInResponse(
+        return SignResponse(
             token = jwt,
             refreshToken = refreshToken
         )
     }
 
-    override fun refreshToken(refreshTokenRequest: RefreshTokenRequest): SignInResponse {
+    override fun refreshToken(refreshTokenRequest: RefreshTokenRequest): SignResponse {
         val username = jwtService.extractUsername(refreshTokenRequest.refreshToken)
         val userDetails = userRepository.findUserByUsername(username)
             .orElseThrow { NullPointerException("No user found") }.toSpringUser()
@@ -91,7 +90,7 @@ class UserServiceImpl(
         val jwt = jwtService.generateToken(userDetails)
         val refreshToken = jwtService.generateRefreshToken(HashMap(), userDetails)
 
-        return SignInResponse(
+        return SignResponse(
             token = jwt,
             refreshToken = refreshToken
         )
@@ -113,6 +112,6 @@ class UserServiceImpl(
         return user
     }
 
-    fun userExists(userDto: UserDto): Boolean =
-        userRepository.findUserByUsername(userDto.username).isPresent
+    fun userExists(username: String): Boolean =
+        userRepository.findUserByUsername(username).isPresent
 }

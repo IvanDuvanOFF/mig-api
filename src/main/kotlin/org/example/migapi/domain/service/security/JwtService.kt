@@ -1,4 +1,4 @@
-package org.example.migapi.domain.service
+package org.example.migapi.domain.service.security
 
 import org.springframework.security.core.userdetails.UserDetails
 

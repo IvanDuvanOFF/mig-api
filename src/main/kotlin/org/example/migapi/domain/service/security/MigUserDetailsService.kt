@@ -1,4 +1,4 @@
-package org.example.migapi.domain.service.impl
+package org.example.migapi.domain.service.security
 
 import org.example.migapi.domain.model.SpringUser
 import org.example.migapi.repository.UserRepository

@@ -1,12 +1,11 @@
 package org.example.migapi.controller.auth
 
 import jakarta.servlet.http.HttpServletRequest
-import org.example.migapi.domain.dto.UserDto
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
-import org.example.migapi.domain.dto.auth.SignInRequest
-import org.example.migapi.domain.dto.auth.SignInResponse
+import org.example.migapi.domain.dto.auth.SignRequest
+import org.example.migapi.domain.dto.auth.SignResponse
 import org.example.migapi.domain.dto.util.Redirect
-import org.example.migapi.domain.service.UserService
+import org.example.migapi.domain.service.data.UserService
 import org.example.migapi.utils.MigUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mail.javamail.JavaMailSender
@@ -24,7 +23,7 @@ class AuthenticationController(
 ) {
 
     @PostMapping("signup")
-    fun signUp(@RequestBody signUpRequest: UserDto, request: HttpServletRequest): Redirect {
+    fun signUp(@RequestBody signUpRequest: SignRequest, request: HttpServletRequest): Redirect {
         userService.saveUser(signUpRequest, request)
 
         val url = migUtils.getHostUrl(request)
@@ -33,9 +32,9 @@ class AuthenticationController(
     }
 
     @PostMapping("signin")
-    fun signIn(@RequestBody signInRequest: SignInRequest): SignInResponse = userService.signIn(signInRequest)
+    fun signIn(@RequestBody signRequest: SignRequest): SignResponse = userService.signIn(signRequest)
 
     @PostMapping("refresh")
-    fun refresh(@RequestBody refreshTokenRequest: RefreshTokenRequest): SignInResponse =
+    fun refresh(@RequestBody refreshTokenRequest: RefreshTokenRequest): SignResponse =
         userService.refreshToken(refreshTokenRequest)
 }
