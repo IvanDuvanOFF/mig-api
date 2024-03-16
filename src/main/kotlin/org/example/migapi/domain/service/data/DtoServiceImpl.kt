@@ -10,9 +10,11 @@ import org.example.migapi.domain.model.User
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.model.enums.EStudentStatus
 import org.example.migapi.exception.CountryNotFoundException
+import org.example.migapi.exception.RoleNotFoundException
 import org.example.migapi.repository.CountryRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.lang.IllegalArgumentException
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -85,6 +87,10 @@ class DtoServiceImpl(
         username = userDto.username,
         password = userDto.password,
         isActive = userDto.isActive,
-        role = Role(ERole.valueOf(userDto.role))
+        role = try {
+            Role(ERole.valueOf(userDto.role))
+        } catch (e: IllegalArgumentException) {
+            throw RoleNotFoundException("Role ${userDto.role} doesn't exists")
+        }
     )
 }

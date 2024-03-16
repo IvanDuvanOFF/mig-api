@@ -2,7 +2,6 @@ package org.example.migapi.controller
 
 import org.example.migapi.domain.dto.AdminDto
 import org.example.migapi.domain.dto.StudentDto
-import org.example.migapi.domain.service.data.DtoService
 import org.example.migapi.domain.service.data.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -16,9 +15,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/signup")
 class SignUpController(
     @Autowired
-    private val userService: UserService,
-    @Autowired
-    private val dtoService: DtoService
+    private val userService: UserService
 ) {
     @PostMapping("admin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
