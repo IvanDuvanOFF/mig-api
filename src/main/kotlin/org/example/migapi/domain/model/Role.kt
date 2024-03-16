@@ -5,7 +5,7 @@ import org.example.migapi.domain.model.enums.ERole
 
 @Entity
 @Table(name = "roles")
-data class Role(
+class Role(
     @Id
     @Enumerated(EnumType.STRING)
     val name: ERole

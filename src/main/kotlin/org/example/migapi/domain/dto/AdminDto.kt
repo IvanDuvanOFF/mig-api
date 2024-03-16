@@ -4,7 +4,7 @@ class AdminDto(
     id: String? = null,
     username: String,
     password: String,
-    isActive: Boolean,
+    isActive: Boolean = false,
     val name: String,
     val surname: String
 ) : UserDto(id, username, password, isActive, "ROLE_ADMIN")

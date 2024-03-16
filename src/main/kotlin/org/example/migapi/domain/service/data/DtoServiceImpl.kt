@@ -9,12 +9,29 @@ import org.example.migapi.domain.model.StudentStatus
 import org.example.migapi.domain.model.User
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.model.enums.EStudentStatus
-import org.example.migapi.domain.service.data.DtoService
+import org.example.migapi.exception.CountryNotFoundException
+import org.example.migapi.repository.CountryRepository
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import java.util.*
 
-class DtoServiceImpl : DtoService {
-    fun userToUserDto(user: User): UserDto = UserDto(
+@Service
+class DtoServiceImpl(
+    @Autowired
+    private val formatter: DateTimeFormatter,
+    @Autowired
+    private val countryRepository: CountryRepository
+) : DtoService {
+
+    override fun toUser(userDto: UserDto): User = when (userDto) {
+        is AdminDto -> adminDtoToUser(userDto)
+        is StudentDto -> studentDtoToUser(userDto)
+        else -> userDtoToUser(userDto)
+    }
+
+    override fun userToUserDto(user: User): UserDto = UserDto(
         id = user.id.toString(),
         username = user.username,
         password = user.password,
@@ -22,7 +39,7 @@ class DtoServiceImpl : DtoService {
         role = user.role.name.name
     )
 
-    fun userToAdminDto(user: User): AdminDto = AdminDto(
+    override fun userToAdminDto(user: User): AdminDto = AdminDto(
         id = user.id.toString(),
         username = user.username,
         password = user.password,
@@ -31,7 +48,7 @@ class DtoServiceImpl : DtoService {
         surname = user.surname
     )
 
-    fun userToStudentDto(user: User): StudentDto = StudentDto(
+    override fun userToStudentDto(user: User): StudentDto = StudentDto(
         id = user.id.toString(),
         username = user.username,
         password = user.password,
@@ -42,28 +59,32 @@ class DtoServiceImpl : DtoService {
         email = user.email,
         phone = user.phone,
         country = user.country.name,
-        birthday = Date(user.birthday.toEpochDay()),
+        birthday = user.birthday.format(formatter),
         status = user.status.name.name
     )
 
-    fun studentDtoToUser(studentDto: StudentDto): User = User(
-        id = if (studentDto.id == null)
-            UUID.randomUUID()
-        else
-            UUID.fromString(studentDto.id),
-        username = studentDto.username,
-        password = studentDto.password,
-        role = Role(ERole.valueOf(studentDto.role)),
-        isActive = studentDto.isActive,
-        name = studentDto.name,
-        surname = studentDto.surname,
-        patronymic = studentDto.patronymic,
-        email = studentDto.email,
-        phone = studentDto.phone,
-        // todo add check for country existing
-        country = Country(studentDto.country),
-        // may cause problems
-        birthday = LocalDate.parse(studentDto.birthday.toString()),
+    override fun studentDtoToUser(studentDto: StudentDto): User = userDtoToUser(studentDto).apply {
+        name = studentDto.name
+        surname = studentDto.surname
+        patronymic = studentDto.patronymic
+        email = studentDto.email
+        phone = studentDto.phone
+        country = Country(studentDto.country).takeIf { countryRepository.findById(it.name).isEmpty }
+            ?: throw CountryNotFoundException("No country ${studentDto.country} found")
+        birthday = LocalDate.parse(studentDto.birthday, formatter)
         status = StudentStatus(EStudentStatus.valueOf(studentDto.status))
+    }
+
+    override fun adminDtoToUser(adminDto: AdminDto): User = userDtoToUser(adminDto).apply {
+        name = adminDto.name
+        surname = adminDto.surname
+    }
+
+    override fun userDtoToUser(userDto: UserDto): User = User(
+        id = userDto.id?.let { UUID.fromString(it) } ?: UUID.randomUUID(),
+        username = userDto.username,
+        password = userDto.password,
+        isActive = userDto.isActive,
+        role = Role(ERole.valueOf(userDto.role))
     )
 }

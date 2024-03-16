@@ -1,13 +1,10 @@
 package org.example.migapi.domain.model
 
 import jakarta.persistence.*
-import org.example.migapi.domain.dto.AdminDto
-import org.example.migapi.domain.dto.Dto
-import org.example.migapi.domain.dto.UserDto
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotEmpty
 
@@ -64,23 +61,6 @@ data class User(
         )
         .disabled(!isActive)
         .build()
-
-    fun toUserDto() = UserDto(
-        id = id.toString(),
-        username = username,
-        password = password,
-        isActive = isActive,
-        role = role.name.name
-    )
-
-    fun toAdminDto() = AdminDto(
-        id = id.toString(),
-        username = username,
-        password = password,
-        isActive = isActive,
-        name = name,
-        surname = surname
-    )
 }
 
 typealias SpringUser = org.springframework.security.core.userdetails.User

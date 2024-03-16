@@ -2,6 +2,7 @@ package org.example.migapi.domain.service.data
 
 import jakarta.persistence.PersistenceException
 import jakarta.servlet.http.HttpServletRequest
+import org.example.migapi.domain.dto.UserDto
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
 import org.example.migapi.domain.dto.auth.SignRequest
 import org.example.migapi.domain.dto.auth.SignResponse
@@ -9,6 +10,7 @@ import org.example.migapi.domain.model.SpringUser
 import org.example.migapi.domain.model.User
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.service.security.JwtService
+import org.example.migapi.exception.UserAlreadyExistsException
 import org.example.migapi.repository.RoleRepository
 import org.example.migapi.repository.UserRepository
 import org.example.migapi.repository.VerificationTokenRepository
@@ -25,6 +27,8 @@ import kotlin.jvm.Throws
 
 @Service
 class UserServiceImpl(
+    @Autowired
+    private val dtoService: DtoService,
     @Autowired
     private val userRepository: UserRepository,
     @Autowired
@@ -58,6 +62,15 @@ class UserServiceImpl(
             surname = "",
             birthday = LocalDate.now()
         )
+
+        return userRepository.save(user)
+    }
+
+    override fun createUser(userDto: UserDto): User {
+        if (userExists(userDto.username))
+            throw UserAlreadyExistsException("Username is already exists")
+
+        val user = dtoService.toUser(userDto).apply { password = passwordEncoder.encode(password) }
 
         return userRepository.save(user)
     }

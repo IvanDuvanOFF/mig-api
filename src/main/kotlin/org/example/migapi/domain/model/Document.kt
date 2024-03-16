@@ -2,7 +2,7 @@ package org.example.migapi.domain.model
 
 import jakarta.persistence.*
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "documents")
