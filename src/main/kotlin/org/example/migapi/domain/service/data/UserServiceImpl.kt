@@ -1,5 +1,6 @@
 package org.example.migapi.domain.service.data
 
+import jakarta.persistence.PersistenceException
 import jakarta.servlet.http.HttpServletRequest
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
 import org.example.migapi.domain.dto.auth.SignRequest
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.jvm.Throws
 
 @Service
 class UserServiceImpl(
@@ -112,6 +114,7 @@ class UserServiceImpl(
         return user
     }
 
+    @Throws(exceptionClasses = [PersistenceException::class])
     fun userExists(username: String): Boolean =
         userRepository.findUserByUsername(username).isPresent
 }
