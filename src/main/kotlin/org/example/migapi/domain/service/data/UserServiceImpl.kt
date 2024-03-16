@@ -8,20 +8,25 @@ import org.example.migapi.domain.dto.auth.SignRequest
 import org.example.migapi.domain.dto.auth.SignResponse
 import org.example.migapi.domain.model.SpringUser
 import org.example.migapi.domain.model.User
+import org.example.migapi.domain.model.VerificationToken
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.service.security.JwtService
 import org.example.migapi.exception.UserAlreadyExistsException
+import org.example.migapi.exception.UserNotFoundException
+import org.example.migapi.exception.UsernameNullException
 import org.example.migapi.repository.RoleRepository
 import org.example.migapi.repository.UserRepository
 import org.example.migapi.repository.VerificationTokenRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.mail.SimpleMailMessage
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.temporal.ChronoUnit
 import java.util.*
 import kotlin.jvm.Throws
 
@@ -75,6 +80,15 @@ class UserServiceImpl(
         return userRepository.save(user)
     }
 
+    override fun blockUser(email: String?): User {
+        if (email == null)
+            throw UsernameNullException("Email cannot be null")
+
+        return userRepository.findUserByEmail(email)
+            .orElseThrow { UserNotFoundException("User with email $email not found") }
+            .block()
+    }
+
     override fun signIn(signRequest: SignRequest): SignResponse {
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
@@ -109,6 +123,23 @@ class UserServiceImpl(
             token = jwt,
             refreshToken = refreshToken
         )
+    }
+
+    override fun prepareEmail(user: User, url: String): SimpleMailMessage {
+        val verificationToken = verificationTokenRepository.save(
+            VerificationToken(
+                expirationDate = LocalDateTime.now().plus(verificationTokenExpiration.toLong(), ChronoUnit.MILLIS),
+                user = user
+            )
+        )
+
+        val email = SimpleMailMessage()
+
+        email.setTo(user.email)
+        email.subject = "Registration confirmation"
+        email.text = "$url/auth/restore?token=${verificationToken.token}"
+
+        return email
     }
 
     private fun findUserByVerificationToken(token: String): User {

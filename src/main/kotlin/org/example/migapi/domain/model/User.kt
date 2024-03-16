@@ -61,6 +61,12 @@ data class User(
         )
         .disabled(!isActive)
         .build()
+
+    fun block(): User {
+        isActive = isActive.not()
+
+        return this
+    }
 }
 
 typealias SpringUser = org.springframework.security.core.userdetails.User
