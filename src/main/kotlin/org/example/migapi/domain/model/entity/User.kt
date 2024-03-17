@@ -1,6 +1,7 @@
-package org.example.migapi.domain.model
+package org.example.migapi.domain.model.entity
 
 import jakarta.persistence.*
+import org.example.migapi.domain.model.SpringUser
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import java.time.LocalDate
@@ -51,7 +52,10 @@ data class User(
     @NotEmpty
     @ManyToOne(targetEntity = StudentStatus::class, fetch = FetchType.EAGER)
     @JoinColumn(name = "status")
-    var status: StudentStatus = StudentStatus()
+    var status: StudentStatus = StudentStatus(),
+
+    @Column(name = "is_2fa_enabled")
+    var using2Fa: Boolean = false
 ) {
     fun toSpringUser(): UserDetails = SpringUser.builder()
         .username(username)
@@ -68,5 +72,3 @@ data class User(
         return this
     }
 }
-
-typealias SpringUser = org.springframework.security.core.userdetails.User

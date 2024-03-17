@@ -1,7 +1,7 @@
 package org.example.migapi.controller
 
-import org.example.migapi.domain.dto.AdminDto
-import org.example.migapi.domain.dto.StudentDto
+import org.example.migapi.domain.dto.data.AdminDto
+import org.example.migapi.domain.dto.data.StudentDto
 import org.example.migapi.domain.service.data.UserService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus

@@ -1,8 +1,9 @@
-package org.example.migapi.domain.model
+package org.example.migapi.domain.model.entity
 
 import jakarta.persistence.*
+import org.example.migapi.domain.model.Model
 import java.time.LocalDateTime
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "verification_tokens")

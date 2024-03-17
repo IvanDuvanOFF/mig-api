@@ -3,11 +3,11 @@ package org.example.migapi.domain.service.data
 import io.jsonwebtoken.JwtException
 import jakarta.persistence.PersistenceException
 import jakarta.servlet.http.HttpServletRequest
-import org.example.migapi.domain.dto.UserDto
+import org.example.migapi.domain.dto.data.UserDto
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
 import org.example.migapi.domain.dto.auth.SignRequest
 import org.example.migapi.domain.dto.auth.SignResponse
-import org.example.migapi.domain.model.User
+import org.example.migapi.domain.model.entity.User
 import org.example.migapi.exception.*
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.security.authentication.DisabledException

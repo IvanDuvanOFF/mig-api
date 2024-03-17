@@ -1,12 +1,12 @@
 package org.example.migapi.domain.service.data
 
-import org.example.migapi.domain.dto.AdminDto
-import org.example.migapi.domain.dto.StudentDto
-import org.example.migapi.domain.dto.UserDto
-import org.example.migapi.domain.model.Country
-import org.example.migapi.domain.model.Role
-import org.example.migapi.domain.model.StudentStatus
-import org.example.migapi.domain.model.User
+import org.example.migapi.domain.dto.data.AdminDto
+import org.example.migapi.domain.dto.data.StudentDto
+import org.example.migapi.domain.dto.data.UserDto
+import org.example.migapi.domain.model.entity.Country
+import org.example.migapi.domain.model.entity.Role
+import org.example.migapi.domain.model.entity.StudentStatus
+import org.example.migapi.domain.model.entity.User
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.model.enums.EStudentStatus
 import org.example.migapi.exception.CountryNotFoundException

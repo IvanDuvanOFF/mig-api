@@ -1,10 +1,10 @@
 package org.example.migapi.domain.service.data
 
 import jakarta.persistence.PersistenceException
-import org.example.migapi.domain.dto.AdminDto
-import org.example.migapi.domain.dto.StudentDto
-import org.example.migapi.domain.dto.UserDto
-import org.example.migapi.domain.model.User
+import org.example.migapi.domain.dto.data.AdminDto
+import org.example.migapi.domain.dto.data.StudentDto
+import org.example.migapi.domain.dto.data.UserDto
+import org.example.migapi.domain.model.entity.User
 import org.example.migapi.exception.CountryNotFoundException
 import org.example.migapi.exception.RoleNotFoundException
 import kotlin.jvm.Throws

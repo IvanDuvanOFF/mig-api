@@ -1,7 +1,6 @@
 package org.example.migapi.controller
 
-import org.example.migapi.domain.dto.StudentDto
-import org.example.migapi.domain.model.enums.ERole
+import org.example.migapi.domain.dto.data.StudentDto
 import org.springframework.http.HttpRequest
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.PostMapping

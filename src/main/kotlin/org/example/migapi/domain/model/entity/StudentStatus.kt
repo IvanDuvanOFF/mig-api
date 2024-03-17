@@ -1,10 +1,7 @@
-package org.example.migapi.domain.model
+package org.example.migapi.domain.model.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.Id
-import jakarta.persistence.Table
+import jakarta.persistence.*
+import org.example.migapi.domain.model.Model
 import org.example.migapi.domain.model.enums.EStudentStatus
 
 @Entity

@@ -1,5 +1,6 @@
-package org.example.migapi.domain.dto
+package org.example.migapi.domain.dto.data
 
+import org.example.migapi.domain.dto.Dto
 import org.example.migapi.domain.model.enums.ERole
 
 open class UserDto(

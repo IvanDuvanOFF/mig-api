@@ -1,8 +1,9 @@
-package org.example.migapi.domain.model
+package org.example.migapi.domain.model.entity
 
 import jakarta.persistence.*
+import org.example.migapi.domain.model.Model
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "typographies")

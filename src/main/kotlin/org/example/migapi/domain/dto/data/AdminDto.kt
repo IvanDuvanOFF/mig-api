@@ -1,4 +1,4 @@
-package org.example.migapi.domain.dto
+package org.example.migapi.domain.dto.data
 
 class AdminDto(
     id: String? = null,

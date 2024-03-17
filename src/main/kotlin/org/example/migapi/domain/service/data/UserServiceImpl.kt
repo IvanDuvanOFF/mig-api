@@ -2,13 +2,13 @@ package org.example.migapi.domain.service.data
 
 import jakarta.persistence.PersistenceException
 import jakarta.servlet.http.HttpServletRequest
-import org.example.migapi.domain.dto.UserDto
+import org.example.migapi.domain.dto.data.UserDto
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
 import org.example.migapi.domain.dto.auth.SignRequest
 import org.example.migapi.domain.dto.auth.SignResponse
 import org.example.migapi.domain.model.SpringUser
-import org.example.migapi.domain.model.User
-import org.example.migapi.domain.model.VerificationToken
+import org.example.migapi.domain.model.entity.User
+import org.example.migapi.domain.model.entity.VerificationToken
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.service.security.JwtService
 import org.example.migapi.exception.*
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -48,7 +49,7 @@ class UserServiceImpl(
 ) : UserService {
 
     override fun saveUser(signRequest: SignRequest, request: HttpServletRequest): User {
-        if (userExists(signRequest.username))
+        if (userExists(signRequest.login))
             throw NullPointerException("Username or email is already taken")
 
 
@@ -56,7 +57,7 @@ class UserServiceImpl(
             .orElseThrow { NullPointerException("No role ${ERole.ROLE_USER.name} does not exist") }
 
         val user = User(
-            username = signRequest.username,
+            username = signRequest.login,
             password = passwordEncoder.encode(signRequest.password),
             role = role,
             isActive = true,
@@ -100,7 +101,7 @@ class UserServiceImpl(
     override fun signIn(signRequest: SignRequest): SignResponse {
         val authentication = authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                signRequest.username,
+                signRequest.login,
                 signRequest.password
             )
         )
@@ -115,6 +116,9 @@ class UserServiceImpl(
             refreshToken = refreshToken
         )
     }
+
+    fun validateUser(login: String, password: String): SpringUser =
+        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(login, password)).principal as SpringUser
 
     override fun refreshToken(refreshTokenRequest: RefreshTokenRequest): SignResponse {
         val username = jwtService.extractUsername(refreshTokenRequest.refreshToken)
@@ -142,8 +146,6 @@ class UserServiceImpl(
         )
 
         val email = SimpleMailMessage()
-
-
 
         email.setTo(user.email)
         email.subject = "Registration confirmation"
