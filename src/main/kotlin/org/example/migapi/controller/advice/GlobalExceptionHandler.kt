@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice
 import org.springframework.web.bind.annotation.ExceptionHandler
 
 import org.example.migapi.domain.dto.util.Error
+import org.springframework.http.converter.HttpMessageNotReadableException
 
 @ControllerAdvice
 class GlobalExceptionHandler {
@@ -25,6 +26,7 @@ class GlobalExceptionHandler {
             DisabledException::class,
             BadCredentialsException::class,
             AuthenticationException::class,
+            HttpMessageNotReadableException::class,
             Exception::class
         ]
     )
@@ -35,6 +37,7 @@ class GlobalExceptionHandler {
             is DisabledException -> HttpStatus.LOCKED
             is BadCredentialsException -> HttpStatus.FORBIDDEN
             is AuthenticationException -> HttpStatus.NOT_FOUND
+            is HttpMessageNotReadableException -> HttpStatus.BAD_REQUEST
             else -> {
                 logger.error { e.stackTrace }
                 HttpStatus.I_AM_A_TEAPOT

@@ -2,15 +2,14 @@ package org.example.migapi.controller.auth
 
 import jakarta.servlet.http.HttpServletRequest
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
-import org.example.migapi.domain.dto.auth.Restore
 import org.example.migapi.domain.dto.auth.SignRequest
 import org.example.migapi.domain.dto.auth.SignResponse
 import org.example.migapi.domain.dto.util.Redirect
 import org.example.migapi.domain.service.data.UserService
+import org.example.migapi.exception.PasswordsAreNotEqualException
 import org.example.migapi.utils.MigUtils
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.mail.MailSender
-import org.springframework.stereotype.Controller
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -42,12 +41,14 @@ class AuthenticationController(
         //todo change url
         return Redirect(url)
     }
-}
 
-@Controller
-class AController {
-    @PostMapping("/restore")
-    fun restore(@RequestParam token: String, @RequestBody password: Restore) {
-        println("HELLO WORLD")
+    inner class Passwords(val password: String, val confirmation: String)
+
+    @PostMapping("restore/{token}")
+    fun restore(@PathVariable token: String, @RequestBody passwords: Passwords) {
+        if (passwords.password != passwords.confirmation)
+            throw PasswordsAreNotEqualException()
+
+        userService.restoreUser(token, passwords.password)
     }
 }

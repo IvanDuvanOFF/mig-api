@@ -11,9 +11,7 @@ import org.example.migapi.domain.model.User
 import org.example.migapi.domain.model.VerificationToken
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.service.security.JwtService
-import org.example.migapi.exception.UserAlreadyExistsException
-import org.example.migapi.exception.UserNotFoundException
-import org.example.migapi.exception.UsernameNullException
+import org.example.migapi.exception.*
 import org.example.migapi.repository.RoleRepository
 import org.example.migapi.repository.UserRepository
 import org.example.migapi.repository.VerificationTokenRepository
@@ -28,7 +26,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 import java.util.*
-import kotlin.jvm.Throws
 
 @Service
 class UserServiceImpl(
@@ -49,6 +46,7 @@ class UserServiceImpl(
     @Value("\${mig.jwt.verification-expiration}")
     private val verificationTokenExpiration: Int
 ) : UserService {
+
     override fun saveUser(signRequest: SignRequest, request: HttpServletRequest): User {
         if (userExists(signRequest.username))
             throw NullPointerException("Username or email is already taken")
@@ -87,6 +85,16 @@ class UserServiceImpl(
         return userRepository.findUserByEmail(email)
             .orElseThrow { UserNotFoundException("User with email $email not found") }
             .block()
+    }
+
+    override fun restoreUser(token: String, password: String) {
+        val verificationToken = findUserByVerificationToken(token)
+
+        if (verificationToken.user.isActive)
+            throw UserAlreadyActivatedException("The account has been already restored")
+        verificationToken.user.isActive = true
+
+        verificationTokenRepository.delete(verificationToken)
     }
 
     override fun signIn(signRequest: SignRequest): SignResponse {
@@ -135,27 +143,31 @@ class UserServiceImpl(
 
         val email = SimpleMailMessage()
 
+
+
         email.setTo(user.email)
         email.subject = "Registration confirmation"
-        email.text = "$url/auth/restore?token=${verificationToken.token}"
+        email.text = "$url/auth/restore/${verificationToken.token}"
 
         return email
     }
 
-    private fun findUserByVerificationToken(token: String): User {
+    @Throws(
+        exceptionClasses = [
+            VerificationTokenNotFoundException::class,
+            VerificationTokenExpiredException::class,
+            PersistenceException::class
+        ]
+    )
+    private fun findUserByVerificationToken(token: String): VerificationToken {
         val verificationToken = verificationTokenRepository.findById(UUID.fromString(token))
 
         if (verificationToken.isEmpty)
-            throw NullPointerException("Verification token has not been found")
+            throw VerificationTokenNotFoundException("Verification token has not been found")
         if (verificationToken.get().expirationDate.isBefore(LocalDateTime.now()))
-            throw NullPointerException("Verification token has been expired")
+            throw VerificationTokenExpiredException("Verification token has been expired")
 
-        val user = verificationToken.get().user
-
-        if (user.isActive)
-            throw NullPointerException("Your account has been already activated")
-
-        return user
+        return verificationToken.get()
     }
 
     @Throws(exceptionClasses = [PersistenceException::class])

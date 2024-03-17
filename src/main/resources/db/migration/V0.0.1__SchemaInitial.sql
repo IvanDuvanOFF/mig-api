@@ -13,7 +13,7 @@ create table users (
 );
 
 create table verification_tokens (
-    token text primary key,
+    token uuid primary key,
     user_id uuid not null,
     expiration_date timestamp without time zone,
 
