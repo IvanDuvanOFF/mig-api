@@ -2,15 +2,17 @@ package org.example.migapi.domain.service.data
 
 import jakarta.persistence.PersistenceException
 import jakarta.servlet.http.HttpServletRequest
-import org.example.migapi.domain.dto.data.UserDto
 import org.example.migapi.domain.dto.auth.RefreshTokenRequest
 import org.example.migapi.domain.dto.auth.SignRequest
 import org.example.migapi.domain.dto.auth.SignResponse
+import org.example.migapi.domain.dto.auth.VerificationRequest
+import org.example.migapi.domain.dto.data.UserDto
 import org.example.migapi.domain.model.SpringUser
 import org.example.migapi.domain.model.entity.User
 import org.example.migapi.domain.model.entity.VerificationToken
 import org.example.migapi.domain.model.enums.ERole
 import org.example.migapi.domain.service.security.JwtService
+import org.example.migapi.domain.service.security.TotpService
 import org.example.migapi.exception.*
 import org.example.migapi.repository.RoleRepository
 import org.example.migapi.repository.UserRepository
@@ -19,8 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.mail.SimpleMailMessage
 import org.springframework.security.authentication.AuthenticationManager
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
-import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -44,6 +46,8 @@ class UserServiceImpl(
     private val authenticationManager: AuthenticationManager,
     @Autowired
     private val jwtService: JwtService,
+    @Autowired
+    private val totpService: TotpService,
     @Value("\${mig.jwt.verification-expiration}")
     private val verificationTokenExpiration: Int
 ) : UserService {
@@ -108,6 +112,14 @@ class UserServiceImpl(
 
         val userDetails = authentication.principal as SpringUser
 
+        val user = userRepository.findUserByUsername(userDetails.username).get()
+
+        if (user.using2Fa) {
+            totpService.generateCode(user)
+
+            return SignResponse(tfaEnabled = true)
+        }
+
         val jwt = jwtService.generateToken(userDetails)
         val refreshToken = jwtService.generateRefreshToken(HashMap(), userDetails)
 
@@ -117,8 +129,21 @@ class UserServiceImpl(
         )
     }
 
-    fun validateUser(login: String, password: String): SpringUser =
-        authenticationManager.authenticate(UsernamePasswordAuthenticationToken(login, password)).principal as SpringUser
+    // todo exceptions
+    // todo userDetails -> user in jwtService
+    fun verifyCode(verificationRequest: VerificationRequest): SignResponse {
+        val user = userRepository.findUserByUsername(verificationRequest.username)
+            .orElseThrow { UserNotFoundException("User with username ${verificationRequest.username} not found") }
+
+        if (!totpService.validateCode(user, verificationRequest.code))
+            throw BadCredentialsException("Code not correct")
+
+        val userDetails = user.toSpringUser()
+        return SignResponse(
+            token = jwtService.generateToken(userDetails),
+            refreshToken = jwtService.generateRefreshToken(HashMap(), userDetails)
+        )
+    }
 
     override fun refreshToken(refreshTokenRequest: RefreshTokenRequest): SignResponse {
         val username = jwtService.extractUsername(refreshTokenRequest.refreshToken)

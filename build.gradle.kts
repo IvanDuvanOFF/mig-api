@@ -8,6 +8,9 @@ plugins {
 	kotlin("plugin.jpa") version "1.9.22"
 
 	id("org.flywaydb.flyway") version "9.22.1"
+
+	kotlin("plugin.lombok") version "1.9.23"
+	id("io.freefair.lombok") version "8.1.0"
 }
 
 group = "org.example"
@@ -43,6 +46,9 @@ dependencies {
 
 //	serialization
 	implementation("com.google.code.gson:gson:2.8.9")
+
+//	lombok
+	compileOnly("org.projectlombok:lombok:1.18.30")
 
 //	jwt
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
