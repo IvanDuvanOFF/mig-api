@@ -5,5 +5,5 @@ interface TotpService {
 
     fun generateCode(secret: String): String
 
-    fun validateCode(otp: String, )
+    fun validateCode(otp: String, secret: String): Boolean
 }
