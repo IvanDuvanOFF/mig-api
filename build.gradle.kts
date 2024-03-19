@@ -1,13 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "3.2.3"
+	id("org.springframework.boot") version "3.0.5"
 	id("io.spring.dependency-management") version "1.1.4"
 	kotlin("jvm") version "1.9.22"
 	kotlin("plugin.spring") version "1.9.22"
 	kotlin("plugin.jpa") version "1.9.22"
 
 	id("org.flywaydb.flyway") version "9.22.1"
+
+	kotlin("plugin.lombok") version "1.9.23"
+	id("io.freefair.lombok") version "8.1.0"
 }
 
 group = "org.example"
@@ -30,6 +33,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-jdbc")
 	implementation("org.springframework.boot:spring-boot-starter-mail")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-security")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 
 //    validation
@@ -42,6 +46,9 @@ dependencies {
 
 //	serialization
 	implementation("com.google.code.gson:gson:2.8.9")
+
+//	lombok
+	compileOnly("org.projectlombok:lombok:1.18.30")
 
 //	jwt
 	implementation("io.jsonwebtoken:jjwt-api:0.11.5")

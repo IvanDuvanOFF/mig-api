@@ -9,5 +9,4 @@ class MigApiApplicationTests {
 	@Test
 	fun contextLoads() {
 	}
-
 }
